@@ -19,7 +19,7 @@ export class RecipientService {
     private readonly recipientSocialModel: typeof RecipientSocial
   ) {}
 
-  // ✅ Create
+  // Create
   async create(createRecipientDto: CreateRecipientDto) {
     const candidate = await this.recipientModel.findOne({
       where: { email: createRecipientDto.email },
@@ -30,10 +30,8 @@ export class RecipientService {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(createRecipientDto.password, 7);
 
-    // Create recipient
     const recipient = await this.recipientModel.create({
       ...createRecipientDto,
       password: hashedPassword,
@@ -42,14 +40,14 @@ export class RecipientService {
     return recipient;
   }
 
-  // ✅ Find all
+  // Find all
   async findAll() {
     return this.recipientModel.findAll({
       include: { all: true },
     });
   }
 
-  // ✅ Find one
+  // Find one
   async findOne(id: number) {
     const recipient = await this.recipientModel.findByPk(id, {
       include: { all: true },
@@ -60,7 +58,7 @@ export class RecipientService {
     return recipient;
   }
 
-  // ✅ Update
+  // Update
   async update(id: number, updateRecipientDto: UpdateRecipientDto) {
     const recipient = await this.findOne(id);
 
@@ -75,7 +73,7 @@ export class RecipientService {
     return recipient;
   }
 
-  // ✅ Delete
+  // Delete
   async remove(id: number) {
     const recipient = await this.findOne(id);
     await recipient.destroy();
