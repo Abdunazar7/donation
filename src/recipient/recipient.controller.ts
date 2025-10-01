@@ -18,7 +18,7 @@ export class RecipientController {
   constructor(private readonly recipientService: RecipientService) {}
 
   @Post()
-  @ApiOperation({ summary: "Yangi recipient qo‘shish" })
+  @ApiOperation({ summary: "Yangi recipient qo'shish" })
   @ApiResponse({ status: 201, type: Recipient })
   create(@Body() dto: CreateRecipientDto) {
     return this.recipientService.create(dto);
@@ -46,7 +46,7 @@ export class RecipientController {
   }
 
   @Delete(":id")
-  @ApiOperation({ summary: "Recipientni o‘chirish" })
+  @ApiOperation({ summary: "Recipientni o'chirish" })
   remove(@Param("id") id: number) {
     return this.recipientService.remove(id);
   }

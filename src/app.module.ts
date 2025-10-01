@@ -5,6 +5,8 @@ import { RecipientModule } from './recipient/recipient.module';
 import { CardModule } from './card/card.module';
 import { SocialMediaModule } from './social-media/social-media.module';
 import { RecipientSocialModule } from './recipient-social/recipient-social.module';
+import { AuthModule } from "./auth/auth.module";
+import { AdminModule } from "./admin/admin.module";
 
 @Module({
   imports: [
@@ -21,12 +23,15 @@ import { RecipientSocialModule } from './recipient-social/recipient-social.modul
       database: process.env.DB_NAME,
       autoLoadModels: true,
       synchronize: true,
+      sync: {alter: true},
       logging: false,
     }),
     RecipientModule,
     CardModule,
     SocialMediaModule,
     RecipientSocialModule,
+    AuthModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
