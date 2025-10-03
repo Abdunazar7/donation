@@ -7,6 +7,8 @@ export class CreateCardDto {
     enum: ["humo", "visa", "uzcard"],
     description: "Karta turi",
   })
+  @IsEnum(["humo", "visa", "uzcard"]) // ✅ validate only allowed values
+  @IsNotEmpty()
   card_type: string;
 
   @ApiProperty({ example: "8600123412341234", description: "Karta raqami" })

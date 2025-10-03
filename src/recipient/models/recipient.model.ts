@@ -8,7 +8,6 @@ interface IRecipientCreationAttr {
   email: string;
   password: string;
   card_number: string;
-  token: string;
   addres: string;
 }
 

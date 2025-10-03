@@ -32,10 +32,6 @@ export class CreateRecipientDto {
   @IsString()
   card_number: string;
 
-
-  @IsString()
-  token: string;
-
   @ApiProperty({ example: "12345678", description: "Recipient paroli" })
   @IsString()
   password: string;

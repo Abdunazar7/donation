@@ -1,34 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ShopService } from './shop.service';
-import { CreateShopDto } from './dto/create-shop.dto';
-import { UpdateShopDto } from './dto/update-shop.dto';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  Delete,
+  ParseIntPipe,
+} from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ShopService } from "./shop.service";
+import { CreateShopDto } from "./dto/create-shop.dto";
+import { UpdateShopDto } from "./dto/update-shop.dto";
+import { Shop } from "./models/shop.model";
 
-@Controller('shop')
+@ApiTags("Shops")
+@Controller("shops")
 export class ShopController {
-  constructor(private readonly shopService: ShopService) {}
+  constructor(private readonly service: ShopService) {}
 
   @Post()
-  create(@Body() createShopDto: CreateShopDto) {
-    return this.shopService.create(createShopDto);
+  @ApiOperation({ summary: "Create shop item" })
+  @ApiResponse({ status: 201, type: Shop })
+  create(@Body() dto: CreateShopDto) {
+    return this.service.create(dto);
   }
 
   @Get()
+  @ApiOperation({ summary: "Get all shop items" })
+  @ApiResponse({ status: 200, type: [Shop] })
   findAll() {
-    return this.shopService.findAll();
+    return this.service.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shopService.findOne(+id);
+  @Get(":id")
+  @ApiOperation({ summary: "Get shop item by id" })
+  findOne(@Param("id", ParseIntPipe) id: number) {
+    return this.service.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShopDto: UpdateShopDto) {
-    return this.shopService.update(+id, updateShopDto);
+  @Patch(":id")
+  @ApiOperation({ summary: "Update shop item" })
+  update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateShopDto) {
+    return this.service.update(id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shopService.remove(+id);
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete shop item" })
+  remove(@Param("id", ParseIntPipe) id: number) {
+    return this.service.remove(id);
   }
 }

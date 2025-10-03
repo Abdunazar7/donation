@@ -1,22 +1,26 @@
 import { Module } from "@nestjs/common";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { JwtModule } from "@nestjs/jwt";
+
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
-import { JwtModule } from "@nestjs/jwt";
-import { ConfigModule } from "@nestjs/config";
-import { AdminModule } from "../admin/admin.module";
+
+import { Admin } from "../admin/models/admin.model";
+import { User } from "../user/models/user.model";
+import { Recipient } from "../recipient/models/recipient.model";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    SequelizeModule.forFeature([Admin, User, Recipient]),
     JwtModule.register({
       secret: process.env.SECRET_KEY || "defaultSecret",
-      signOptions: { expiresIn: process.env.SECRET_TIME || "1h" },
+      signOptions: {
+        expiresIn: process.env.SECRET_TIME || "15h",
+      },
     }),
-    AdminModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [AuthService], // Guard va boshqa joylarda ishlatish uchun
 })
 export class AuthModule {}

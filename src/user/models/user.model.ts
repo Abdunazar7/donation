@@ -1,26 +1,26 @@
 import { Table, Column, Model, DataType } from "sequelize-typescript";
 import { ApiProperty } from "@nestjs/swagger";
 
-interface IAdminCreationAttr {
+interface IUserCreationAttr {
   full_name: string;
   email: string;
   password: string;
-  is_creator: boolean;
-  is_active: boolean;
+  card_number: string;
   token: string;
+  is_active: boolean;
 }
 
-@Table({ tableName: "Admin", freezeTableName: true })
-export class Admin extends Model<Admin, IAdminCreationAttr> {
+@Table({ tableName: "user", freezeTableName: true })
+export class User extends Model<User, IUserCreationAttr> {
   @ApiProperty({ example: 1 })
-  @Column({ type: DataType.SMALLINT, primaryKey: true, autoIncrement: true })
+  @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })
   declare id: number;
 
-  @ApiProperty({ example: "Super Admin" })
+  @ApiProperty({ example: "Ali Valiyev" })
   @Column({ type: DataType.STRING, allowNull: false })
   declare full_name: string;
 
-  @ApiProperty({ example: "admin@mail.com" })
+  @ApiProperty({ example: "ali@mail.com" })
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   declare email: string;
 
@@ -28,15 +28,15 @@ export class Admin extends Model<Admin, IAdminCreationAttr> {
   @Column({ type: DataType.STRING, allowNull: false })
   declare password: string;
 
-  @ApiProperty({ example: true })
-  @Column({ type: DataType.BOOLEAN, defaultValue: false })
-  declare is_creator: boolean;
-
-  @ApiProperty({ example: true })
-  @Column({ type: DataType.BOOLEAN, defaultValue: true })
-  declare is_active: boolean;
+  @ApiProperty({ example: "8600 1234 5678 9012" })
+  @Column({ type: DataType.STRING, allowNull: false })
+  declare card_number: string;
 
   @ApiProperty({ example: "randomToken123" })
   @Column({ type: DataType.STRING, allowNull: false })
   declare token: string;
+
+  @ApiProperty({ example: true })
+  @Column({ type: DataType.BOOLEAN, defaultValue: true })
+  declare is_active: boolean;
 }

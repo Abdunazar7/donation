@@ -18,33 +18,33 @@ export class SocialMediaController {
   constructor(private readonly socialMediaService: SocialMediaService) {}
 
   @Post()
-  @ApiOperation({ summary: "Yangi ijtimoiy tarmoq qo‘shish" })
+  @ApiOperation({ summary: "Create new social media" })
   @ApiResponse({ status: 201, type: SocialMedia })
   create(@Body() dto: CreateSocialMediaDto) {
     return this.socialMediaService.create(dto);
   }
 
   @Get()
-  @ApiOperation({ summary: "Barcha ijtimoiy tarmoqlarni olish" })
+  @ApiOperation({ summary: "Get all social medias" })
   @ApiResponse({ status: 200, type: [SocialMedia] })
   findAll() {
     return this.socialMediaService.findAll();
   }
 
   @Get(":id")
-  @ApiOperation({ summary: "ID orqali ijtimoiy tarmoqni olish" })
+  @ApiOperation({ summary: "Get social media by id" })
   findOne(@Param("id") id: number) {
     return this.socialMediaService.findOne(id);
   }
 
   @Put(":id")
-  @ApiOperation({ summary: "Ijtimoiy tarmoqni yangilash" })
+  @ApiOperation({ summary: "Update social media" })
   update(@Param("id") id: number, @Body() dto: CreateSocialMediaDto) {
     return this.socialMediaService.update(id, dto);
   }
 
   @Delete(":id")
-  @ApiOperation({ summary: "Ijtimoiy tarmoqni o‘chirish" })
+  @ApiOperation({ summary: "Delete social media" })
   remove(@Param("id") id: number) {
     return this.socialMediaService.remove(id);
   }

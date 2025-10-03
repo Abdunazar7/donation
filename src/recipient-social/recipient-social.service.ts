@@ -23,9 +23,11 @@ export class RecipientSocialService {
     const recSocial = await this.recipientSocialModel.findByPk(id, {
       include: { all: true },
     });
+
     if (!recSocial) {
       throw new NotFoundException(`RecipientSocial with ID ${id} not found`);
     }
+
     return recSocial;
   }
 
