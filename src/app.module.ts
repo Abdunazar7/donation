@@ -7,6 +7,9 @@ import { SocialMediaModule } from './social-media/social-media.module';
 import { RecipientSocialModule } from './recipient-social/recipient-social.module';
 import { AuthModule } from "./auth/auth.module";
 import { AdminModule } from "./admin/admin.module";
+import { ShopModule } from './shop/shop.module';
+import { CategoryModule } from './category/category.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { AdminModule } from "./admin/admin.module";
     RecipientSocialModule,
     AuthModule,
     AdminModule,
+    ShopModule,
+    CategoryModule,
+    OrderModule,
   ],
 })
 export class AppModule {}
