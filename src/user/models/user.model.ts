@@ -48,6 +48,10 @@ export class User extends Model<User, IUserCreationAttr> {
   @Column({ type: DataType.STRING, allowNull: false })
   declare token: string;
 
+  @ApiProperty({ example: "randomToken123" })
+  @Column({ type: DataType.STRING, allowNull: false })
+  declare refresh_token: string;
+
   @ApiProperty({ example: true })
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare is_active: boolean;

@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  ForbiddenException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
@@ -15,6 +16,7 @@ import { CreateUserDto } from "../user/dto/create-user.dto";
 import { CreateRecipientDto } from "../recipient/dto/create-recipient.dto";
 import { LoginDto } from "./dto/login.dto";
 import { UserService } from "../user/user.service";
+import { Response, Request } from "express";
 
 @Injectable()
 export class AuthService {
@@ -99,6 +101,60 @@ export class AuthService {
     const payload = { sub: id, email, role };
     return {
       access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async logout(refreshToken: string, res: Response) {
+    const userData = this.jwtService.verify(refreshToken, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+
+    if (!userData) {
+      throw new UnauthorizedException("User not verified");
+    }
+
+    const user = await this.userService.findOne(userData.id);
+    if (!user) {
+      throw new UnauthorizedException("User not found");
+    }
+
+    user.refresh_token = "";
+    await user.save();
+
+    res.clearCookie("refreshToken");
+
+    return { message: "User logged out successfully" };
+  }
+
+  async refreshToken(userId: number, refresh_token: string, res: Response) {
+    const decodedToken = await this.jwtService.decode(refresh_token);
+    if (userId !== decodedToken["id"]) {
+      throw new ForbiddenException("Unauthorized id");
+    }
+
+    const user = await this.userService.findOne(userId);
+    if (!user || !user.refresh_token) {
+      throw new ForbiddenException("Unauthorized user");
+    }
+
+    const tokenMatch = await bcrypt.compare(refresh_token, user.refresh_token);
+    if (!tokenMatch) {
+      throw new ForbiddenException("Forbidden");
+    }
+
+    const { accessToken, refreshToken } = await this.generateTokens(user);
+    user.refresh_token = await bcrypt.hash(refreshToken, 7);
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: Number(process.env.COOKIE_TIME),
+      httpOnly: true,
+    });
+
+    return {
+      message: "User refreshed",
+      userId: user.id,
+      access_token: accessToken,
     };
   }
 }
