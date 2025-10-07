@@ -12,8 +12,15 @@ interface IUserCreationAttr {
 
 @Table({ tableName: "user", freezeTableName: true })
 export class User extends Model<User, IUserCreationAttr> {
-  @ApiProperty({ example: 1 })
-  @Column({ type: DataType.INTEGER, primaryKey: true, autoIncrement: true })
+  @ApiProperty({
+    example: "1",
+    description: "User id",
+  })
+  @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  })
   declare id: number;
 
   @ApiProperty({ example: "Ali Valiyev" })
@@ -24,8 +31,13 @@ export class User extends Model<User, IUserCreationAttr> {
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   declare email: string;
 
-  @ApiProperty({ example: "hashedpassword" })
-  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({
+    example: "1234567",
+    description: "User password",
+  })
+  @Column({
+    type: DataType.STRING(100),
+  })
   declare password: string;
 
   @ApiProperty({ example: "8600 1234 5678 9012" })
@@ -39,4 +51,10 @@ export class User extends Model<User, IUserCreationAttr> {
   @ApiProperty({ example: true })
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare is_active: boolean;
+
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  declare activation_link: string;
 }

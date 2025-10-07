@@ -34,7 +34,14 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",
-    "sequelize-typescript": "^2.1.6"
+    "sequelize-typescript": "^2.1.6",
+    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/mapped-types": "*",
+    "@types/uuid": "^10.0.0",
+    "cookie-parser": "^1.4.7",
+    "handlebars": "^4.7.8",
+    "nodemailer": "^7.0.6",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -61,7 +68,8 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.20.0"
+    "typescript-eslint": "^8.20.0",
+    "@types/nodemailer": "^7.0.2"
   },
   "jest": {
     "moduleFileExtensions": [

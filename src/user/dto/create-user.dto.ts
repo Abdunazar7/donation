@@ -22,6 +22,8 @@ export class CreateUserDto {
   @MinLength(6)
   password: string;
 
+  confirm_password: string;
+
   @ApiProperty({ example: "8600 1234 5678 9012" })
   @IsString()
   @IsNotEmpty()

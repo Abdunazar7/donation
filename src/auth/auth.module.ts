@@ -8,6 +8,7 @@ import { AuthController } from "./auth.controller";
 import { Admin } from "../admin/models/admin.model";
 import { User } from "../user/models/user.model";
 import { Recipient } from "../recipient/models/recipient.model";
+import { UserModule } from "../user/user.module";
 
 @Module({
   imports: [
@@ -18,9 +19,10 @@ import { Recipient } from "../recipient/models/recipient.model";
         expiresIn: process.env.SECRET_TIME || "15h",
       },
     }),
+    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService], // Guard va boshqa joylarda ishlatish uchun
+  exports: [AuthService],
 })
 export class AuthModule {}

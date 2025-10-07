@@ -11,57 +11,52 @@ import { Admin } from "../admin/models/admin.model";
 import { User } from "../user/models/user.model";
 import { Recipient } from "../recipient/models/recipient.model";
 
-import { CreateAdminDto } from "../admin/dto/create-admin.dto";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import { CreateRecipientDto } from "../recipient/dto/create-recipient.dto";
 import { LoginDto } from "./dto/login.dto";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly userService: UserService,
     @InjectModel(Admin) private readonly adminModel: typeof Admin,
     @InjectModel(User) private readonly userModel: typeof User,
     @InjectModel(Recipient) private readonly recipientModel: typeof Recipient
   ) {}
 
-  // ------------------- ADMIN SIGNUP -------------------
-  async signupAdmin(dto: CreateAdminDto) {
-    const exists = await this.adminModel.findOne({
-      where: { email: dto.email },
-    });
-    if (exists) {
-      throw new ConflictException("Admin already exists");
-    }
+  private async generateTokens(user: User) {
+    const payload = {
+      id: user.id,
+      email: user.email,
+      is_active: user.is_active,
+    };
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const admin = await this.adminModel.create({
-      ...dto,
-      password: hashedPassword,
-    });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.sign(payload, {
+        secret: process.env.ACCESS_TOKEN_KEY,
+        expiresIn: process.env.ACCESS_TOKEN_TIME,
+      }),
+      this.jwtService.sign(payload, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+        expiresIn: process.env.REFRESH_TOKEN_TIME,
+      }),
+    ]);
 
-    return this.generateToken(admin.id, admin.email, "admin");
+    return { accessToken, refreshToken };
   }
 
-  // ------------------- USER SIGNUP -------------------
-  async signupUser(dto: CreateUserDto) {
-    const exists = await this.userModel.findOne({
-      where: { email: dto.email },
-    });
-    if (exists) {
-      throw new ConflictException("User already exists");
+  async register(createUserDto: CreateUserDto) {
+    const candidate = await this.userService.findByEmail(createUserDto.email);
+    if (candidate) {
+      throw new ConflictException("User with this email already exists.");
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = await this.userModel.create({
-      ...dto,
-      password: hashedPassword,
-    });
-
-    return this.generateToken(user.id, user.email, "user");
+    const newUser = await this.userService.create(createUserDto);
+    return newUser;
   }
 
-  // ------------------- RECIPIENT SIGNUP -------------------
   async signupRecipient(dto: CreateRecipientDto) {
     const exists = await this.recipientModel.findOne({
       where: { email: dto.email },
@@ -79,21 +74,19 @@ export class AuthService {
     return this.generateToken(recipient.id, recipient.email, "recipient");
   }
 
-  // ------------------- SIGNIN -------------------
   async signin(dto: LoginDto) {
-    // 1️⃣ Admin qidirish
-    let user: any = await this.adminModel.findOne({ where: { email: dto.email } });
+    let user: any = await this.adminModel.findOne({
+      where: { email: dto.email },
+    });
     if (user && (await bcrypt.compare(dto.password, user.password))) {
       return this.generateToken(user.id, user.email, "admin");
     }
 
-    // 2️⃣ Oddiy user qidirish
     user = await this.userModel.findOne({ where: { email: dto.email } });
     if (user && (await bcrypt.compare(dto.password, user.password))) {
       return this.generateToken(user.id, user.email, "user");
     }
 
-    // 3️⃣ Recipient qidirish
     user = await this.recipientModel.findOne({ where: { email: dto.email } });
     if (user && (await bcrypt.compare(dto.password, user.password))) {
       return this.generateToken(user.id, user.email, "recipient");
@@ -102,7 +95,6 @@ export class AuthService {
     throw new UnauthorizedException("Email or password is incorrect");
   }
 
-  // ------------------- TOKEN GENERATOR -------------------
   private async generateToken(id: number, email: string, role: string) {
     const payload = { sub: id, email, role };
     return {

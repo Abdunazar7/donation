@@ -29,7 +29,7 @@ import { PaymentModule } from './payment/payment.module';
       database: process.env.DB_NAME,
       autoLoadModels: true,
       synchronize: true,
-      sync: {alter: true},
+      sync: {force: true},
       logging: false,
     }),
     RecipientModule,

@@ -19,6 +19,11 @@ import { User } from "./models/user.model";
 export class UserController {
   constructor(private readonly service: UserService) {}
 
+  @Get("activate/:link")
+  activateUser(@Param("link") link: string) {
+    return this.service.activateUser(link);
+  }
+
   @Post()
   @ApiOperation({ summary: "Create user" })
   @ApiResponse({ status: 201, type: User })
